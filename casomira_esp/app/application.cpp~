@@ -1,0 +1,123 @@
+/*#include <user_config.h>
+#include <SmingCore/SmingCore.h>
+
+// If you want, you can define WiFi settings globally in Eclipse Environment Variables
+#ifndef WIFI_SSID
+	#define WIFI_SSID "PleaseEnterSSID" // Put you SSID and Password here
+	#define WIFI_PWD "PleaseEnterPass"
+#endif
+
+#define INT_PIN 0   // GPIO0
+#define DALSI 2
+
+void onReceive(UdpConnection& connection, char *data, int size, IPAddress remoteIP, uint16_t remotePort); // Declaration
+
+
+// UDP server
+const uint16_t EchoPort = 1234;
+UdpConnection udp(onReceive);
+
+
+void onReceive(UdpConnection& connection, char *data, int size, IPAddress remoteIP, uint16_t remotePort)
+{
+	debugf("UDP Sever callback from %s:%d, %d bytes", remoteIP.toString().c_str(), remotePort, size);
+
+	// We implement string mode server for example
+	Serial.print(">\t");
+	Serial.print(data);
+
+	// Send echo to remote sender
+	udp.connect(IPAddress(192, 168, 4, 2), 6666);
+	udp.sendString("c");
+}
+
+
+void IRAM_ATTR interruptHandler()
+{
+	udp.connect(IPAddress(192, 168, 4, 2), 6666);
+	udp.sendString("p");
+}
+
+void IRAM_ATTR interruptHandler2()
+{
+	udp.connect(IPAddress(192, 168, 4, 2), 6666);
+	udp.sendString("l");
+}
+
+void init()
+{
+	Serial.begin(SERIAL_BAUD_RATE); // 115200 by default
+	Serial.systemDebugOutput(true);
+
+
+	WifiStation.enable(false);
+	WifiAccessPoint.enable(true);
+	WifiAccessPoint.config("Casomira", "", AUTH_OPEN);
+	udp.listen(EchoPort);
+
+	attachInterrupt(INT_PIN, interruptHandler, CHANGE);
+	attachInterrupt(DALSI, interruptHandler2, CHANGE);
+}*/
+
+
+
+#include <user_config.h>
+#include <SmingCore/SmingCore.h>
+
+// If you want, you can define WiFi settings globally in Eclipse Environment Variables
+#ifndef WIFI_SSID
+	#define WIFI_SSID "PleaseEnterSSID" // Put you SSID and Password here
+	#define WIFI_PWD "PleaseEnterPass"
+#endif
+
+
+#define INT_PIN 0   // GPIO0
+#define DALSI 2
+
+void onReceive(UdpConnection& connection, char *data, int size, IPAddress remoteIP, uint16_t remotePort); // Declaration
+
+
+// UDP server
+const uint16_t EchoPort = 1234;
+UdpConnection udp(onReceive);
+
+
+void onReceive(UdpConnection& connection, char *data, int size, IPAddress remoteIP, uint16_t remotePort)
+{
+	debugf("UDP Sever callback from %s:%d, %d bytes", remoteIP.toString().c_str(), remotePort, size);
+
+	// We implement string mode server for example
+	Serial.print(">\t");
+	Serial.print(data);
+
+	// Send echo to remote sender
+	String text = "c";
+	udp.sendStringTo(remoteIP, 6666, text);
+}
+
+void IRAM_ATTR interruptHandler()
+{
+	String text = "p";
+	udp.sendStringTo(IPAddress(192, 168, 4, 2), 6666, text);
+}
+
+void IRAM_ATTR interruptHandler2()
+{
+	String text = "l";
+	udp.sendStringTo(IPAddress(192, 168, 4, 2), 6666, text);
+}
+
+void init()
+{
+	Serial.begin(SERIAL_BAUD_RATE); // 115200 by default
+	Serial.systemDebugOutput(true);
+
+	WifiStation.enable(false);
+	WifiAccessPoint.enable(true);
+	WifiAccessPoint.config("Casomira", "", AUTH_OPEN);
+	udp.listen(EchoPort);
+
+	attachInterrupt(INT_PIN, interruptHandler, CHANGE);
+	attachInterrupt(DALSI, interruptHandler2, CHANGE);
+}
+
