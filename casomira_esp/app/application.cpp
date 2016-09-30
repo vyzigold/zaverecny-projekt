@@ -67,6 +67,7 @@ float stof(char *neco)
 	return vysledek;
 }*/
 
+//zjisti polohu tercu
 bool isReady()
 {
 	if(!(digitalRead(INT_PIN)||digitalRead(DALSI)))
@@ -217,34 +218,6 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 	soubor = fileOpen(String("muzi"),eFO_ReadOnly);
 	TemplateFileStream *tmpl = new TemplateFileStream("index.html");
 	auto &vars = tmpl->variables();
-/*
-	vars["counter"] = String(counter);
-	//vars["ledstate"] = (*portOutputRegister(digitalPinToPort(LED_PIN)) & digitalPinToBitMask(LED_PIN)) ? "checked" : "";
-	vars["IP"] = WifiStation.getIP().toString();
-	vars["MAC"] = WifiStation.getMAC();
-*/
-	/*if(pohlavi)
-	{
-		vars["pohlavi"] = "Ženy";
-		vars["pohlaviOdkaz"] = "?pohlavi=muzi";
-	}
-	else
-	{
-		vars["pohlavi"] = "Muži";
-		vars["pohlaviOdkaz"] = "?pohlavi=zeny";
-	}
-	if(aktivni)
-	{
-		vars["start"] = "Stop";
-		vars["startOdkaz"] = "?start=false";
-	}
-	else
-	{
-		vars["start"] = "Start";
-		vars["startOdkaz"] = "?start=true";
-	}
-	vars["casLevy"] = String(konecLevy);
-	vars["casPravy"] = String(konecPravy);*/
 
 
 	String add = "";
