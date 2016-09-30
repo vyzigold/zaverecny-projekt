@@ -10,4 +10,4 @@ TO DO:
 
 4. přivařit tyčku k terčům a připojit světla
 
-5. nějak vykutit desku
+5. vytvořit plošný spoj
