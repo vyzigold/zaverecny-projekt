@@ -10,14 +10,13 @@
 #include <sstream>
 #include <time.h>
 
-
 std::string Convert (float number){
     std::ostringstream buff;
     buff<<number;
     return buff.str();   
 }
 
-
+//vrací nenulovou hodnotu při stisku klávesy
 int kbhit() {
     static const int STDIN = 0;
     static bool initialized = false;
@@ -37,13 +36,7 @@ int kbhit() {
     return bytesWaiting;
 }
 
-/**
- * aaa
- * @param data aaa
- * @param packet aaa
- * @param socket aaa
- * @return  aaa
- */
+
 int posliPacket(char *data, UDPpacket *packet, UDPsocket *socket)
 {
     packet->len = strlen(data) + 1;
@@ -72,7 +65,9 @@ void printNastaveni(bool pohlavi, int spozdeni, bool vypis)
         printf("\n\n\nbezi muzi\n");
     else
         printf("bezi zeny\n");
+    
     printf("je nastaveno %dms spozdeni\n",spozdeni);
+    
     if(vypis)
         printf("prubezny vypis casu je povolen\n");
     else
@@ -82,7 +77,7 @@ void printNastaveni(bool pohlavi, int spozdeni, bool vypis)
 
 void printDelayHelp()
 {
-    printf("\n\n\ndelka spozdeni mezi komunikaci s tercama (ovlivnuje presnost a narocnost)\n");
+    printf("\n\n\ndelka spozdeni mezi komunikaci s terci (ovlivnuje presnost a narocnost)\n");
     printf("0           bez spozdeni\n");
     printf("1           1ms\n");
     printf("2           5ms (default)\n");
@@ -138,21 +133,25 @@ int main(int argc, char **argv)
     Mix_Chunk *treti = NULL;
     Mix_Chunk *ctvrty = NULL;
     
+    //nacteni zvuku
     prvni = Mix_LoadWAV( "zvuky/prvni.wav" );
     if( prvni == NULL )
     {
         printf( "Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
     }
+    
     druhy = Mix_LoadWAV( "zvuky/druhy.wav" );
     if( druhy == NULL )
     {
         printf( "Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
     }
+    
     treti = Mix_LoadWAV( "zvuky/treti.wav" );
     if( treti == NULL )
     {
         printf( "Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
     }
+    
     ctvrty = Mix_LoadWAV( "zvuky/ctvrty.wav" );
     if( ctvrty == NULL )
     {
@@ -386,6 +385,7 @@ int main(int argc, char **argv)
             SDL_Delay(spozdeni);
     }
     
+    //uvolneni pameti
     Mix_FreeChunk(prvni);
     Mix_FreeChunk(druhy);
     Mix_FreeChunk(treti);
