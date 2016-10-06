@@ -264,10 +264,38 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 	}
 	vars["add"] = add;
 	fileClose(soubor);
+	delete[](c);
 	
 	response.sendTemplate(tmpl); // this template object will be deleted automatically
 }
 
+void onExport(HttpRequest &request, HttpResponse &response)
+{
+	String csv("levy;pravy\n");
+	file_t soubor;
+	soubor = fileOpen(getQueryParameter(String("pohlavi"), String("")),eFO_ReadOnly);
+
+	char *c = new char[1];
+	fileRead(soubor,(void *) c,1);
+	while(!fileIsEOF(soubor))
+	{
+		fileRead(soubor,(void *) c,1);
+		if(c[0] != ';')
+		{
+			if(c[0] == '\t')
+				c[0] = ';';
+
+			csv += c[0];
+
+			if(c[0] == '\n')
+				fileRead(soubor,(void *) c,1);
+		}
+	}
+	fileClose(soubor);
+	delete[](c);
+
+	response.sendString(csv)
+}
 
 void onFile(HttpRequest &request, HttpResponse &response)
 {
@@ -288,6 +316,7 @@ void startWebServer()
 {
 	server.listen(80);
 	server.addPath("/", onIndex);
+	server.addPath("/export.csv", onExport)
 	server.setDefaultHandler(onFile);
 
 	Serial.println("\r\n=== WEB SERVER STARTED ===");
