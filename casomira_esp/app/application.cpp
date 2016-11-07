@@ -18,6 +18,7 @@ char* pravy = 0;
 
 
 void onReceive(UdpConnection& connection, char *data, int size, IPAddress remoteIP, uint16_t remotePort); // Declaration
+HttpFirmwareUpdate airUpdater;
 
 
 // UDP server
@@ -273,7 +274,7 @@ void onExport(HttpRequest &request, HttpResponse &response)
 {
 	String csv("levy;pravy\n");
 	file_t soubor;
-	soubor = fileOpen(getQueryParameter(String("pohlavi"), String("")),eFO_ReadOnly);
+	soubor = fileOpen(request.getQueryParameter(String("pohlavi"), String("")),eFO_ReadOnly);
 
 	char *c = new char[1];
 	fileRead(soubor,(void *) c,1);
@@ -294,7 +295,7 @@ void onExport(HttpRequest &request, HttpResponse &response)
 	fileClose(soubor);
 	delete[](c);
 
-	response.sendString(csv)
+	response.sendString(csv);
 }
 
 void onFile(HttpRequest &request, HttpResponse &response)
@@ -312,11 +313,30 @@ void onFile(HttpRequest &request, HttpResponse &response)
 	}
 }
 
+void onUpdate(HttpRequest &request, HttpResponse &response)
+{
+	if(request.getQueryParameter("offset", String("0")) != "0")
+	{
+		String offset = "0x";
+		offset+=request.getQueryParameter("offset");
+		airUpdater.addItem(atoi(offset.c_str()), "192.168.4.2/spiff_rom.bin");
+		response.sendString(String(atoi(offset.c_str())));
+		airUpdater.start();
+	}
+	else
+	{
+		response.setCache(86400, true); // It's important to use cache for better performance.
+		response.sendFile("update.html");
+	}
+
+}
+
 void startWebServer()
 {
 	server.listen(80);
 	server.addPath("/", onIndex);
-	server.addPath("/export.csv", onExport)
+	server.addPath("/export.csv", onExport);
+	server.addPath("/update", onUpdate);
 	server.setDefaultHandler(onFile);
 
 	Serial.println("\r\n=== WEB SERVER STARTED ===");
@@ -362,5 +382,8 @@ void init()
 	System.setCpuFrequency(eCF_160MHz);
 	Serial.print("New CPU frequency is:");
 	Serial.println((int)System.getCpuFrequency());
+
+	airUpdater.addItem(0x0000, "192.168.4.2/0x00000.bin");
+	airUpdater.addItem(0x9000, "192.168.4.2/0x09000.bin");
 }
 
