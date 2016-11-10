@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include <cstdlib>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_net.h>
 #include <SDL2/SDL_mixer.h>
@@ -8,7 +8,7 @@
 #include <stropts.h>
 #include <string>
 #include <sstream>
-#include <time.h>
+#include <ctime>
 
 std::string Convert (float number){
     std::ostringstream buff;
@@ -49,13 +49,11 @@ void printHelp()
     printf("\n\n\nM           muzi\n");
     printf("Z           zeny\n");
     printf("H           help\n");
-    printf("D           pro napovedu o nastaveni spozdeni\n");
     printf("T           zobraz stav tercu\n");
     printf("V           zapnutí/vypnutí výpisu průběžného času\n");
     printf("Q           vypnutí programu\n");
     printf("N           vypis momentalniho nastaveni\n");
     printf("S           povol/zakaz vystrel\n");
-    printf("cislo       pro nastaveni spozdeni\n");
     return;
 }
 
@@ -65,9 +63,6 @@ void printNastaveni(bool pohlavi, int spozdeni, bool vypis)
         printf("\n\n\nbezi muzi\n");
     else
         printf("bezi zeny\n");
-    
-    printf("je nastaveno %dms spozdeni\n",spozdeni);
-    
     if(vypis)
         printf("prubezny vypis casu je povolen\n");
     else
@@ -75,19 +70,17 @@ void printNastaveni(bool pohlavi, int spozdeni, bool vypis)
     return;
 }
 
-void printDelayHelp()
+std::string getDate()
 {
-    printf("\n\n\ndelka spozdeni mezi komunikaci s terci (ovlivnuje presnost a narocnost)\n");
-    printf("0           bez spozdeni\n");
-    printf("1           1ms\n");
-    printf("2           5ms (default)\n");
-    printf("3           10ms\n");
-    printf("4           25ms\n");
-    printf("5           50ms\n");
-    printf("6           100ms\n");
-    printf("7           200ms\n");
-    printf("8           500ms\n");
-    printf("9           1000ms\n");
+    std::string date;
+    time_t t = time(0);   // get time now
+    struct tm * now = localtime( & t );
+    date = Convert(now->tm_day);
+    date += ".";
+    date += Convert(now->tm_mon + 1);
+    date += ".";
+    date += Convert(now->tm_year + 1900);
+    return date;
 }
 
 char * stringToChar(std::string neco)
@@ -102,6 +95,20 @@ char * stringToChar(std::string neco)
     }
     vysledek[i] = '\0';
     return vysledek;
+}
+
+std::string upravCas(float cas)
+{
+    std::string cislo = Convert(cas);
+    poziceTecky = cislo.find('.');
+    if(poziceTecky > 2)
+        cislo = "9999";
+    else
+    {
+        cislo.erase(poziceTecky,1);
+        cislo.erase(4,cislo.length()-4);
+    }
+    return cislo;
 }
 
 int main(int argc, char **argv)
@@ -212,6 +219,7 @@ int main(int argc, char **argv)
     char znak;
     char prijato;
     int spozdeni = 5;
+    int poziceTecky = 0;
     if(!posliPacket("s",packetOut,&socketOut))
         printf("%s",SDLNet_GetError());
     while(!quit)
@@ -263,39 +271,6 @@ int main(int argc, char **argv)
                     break;
                 case 'h':
                     printHelp();
-                    break;
-                case '0':
-                    spozdeni = 0;
-                    break;
-                case '1':
-                    spozdeni = 1;
-                    break;
-                case '2':
-                    spozdeni = 5;
-                    break;
-                case '3':
-                    spozdeni = 10;
-                    break;
-                case '4':
-                    spozdeni = 25;
-                    break;
-                case '5':
-                    spozdeni = 50;
-                    break;
-                case '6':
-                    spozdeni = 100;
-                    break;
-                case '7':
-                    spozdeni = 200;
-                    break;
-                case '8':
-                    spozdeni = 500;
-                    break;
-                case '9':
-                    spozdeni = 1000;
-                    break;
-                case 'd':
-                    printDelayHelp();
                     break;
                 case 's':
                     if(vystrel)
@@ -357,16 +332,11 @@ int main(int argc, char **argv)
         {
             printf("%f",levy);
             printf("                      %f\n",pravy);
-            cislo = Convert(levy);
-            char *retezec = stringToChar(cislo);
-            if(posliPacket(retezec,packetOut,&socketOut))
+            cislo = upravCas(levy);
+            cislo += upravCas(pravy);
+            cislo += getDate();
+            if(posliPacket(&cislo[0],packetOut,&socketOut))
                 printf("%s",SDLNet_GetError());
-            cislo = Convert(pravy);
-            delete retezec;
-            retezec = stringToChar(cislo);
-            if(posliPacket(retezec,packetOut,&socketOut))
-                printf("%s",SDLNet_GetError());
-            delete retezec;
             started = false;
         }
         if(vypis && started)
