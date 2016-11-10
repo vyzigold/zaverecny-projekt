@@ -12,9 +12,6 @@
 #define DALSI 12
 
 bool pohlavi = true;
-char* levy = 0;
-int delkaLevy;
-char* pravy = 0;
 
 
 void onReceive(UdpConnection& connection, char *data, int size, IPAddress remoteIP, uint16_t remotePort); // Declaration
@@ -96,42 +93,48 @@ void posliPohlavi()
 	udp.sendStringTo(IPAddress(192, 168, 4, 2), 6666, text);
 }
 
-void zapisCas(char* terc, int delka)
+void zapisCas(char* data, int delka)
 {
+	char *levy = new char[5];
+	char *pravy = new char[5];
+	char *date = new char[delka - 8];
 	Serial.print("Zapis: ");
-	Serial.print(terc);
+	Serial.print(data);
 	Serial.print('\t');
 	Serial.print(delka);
 	Serial.println("\n");
-	if(levy == 0)
+
+	for(int i = 0; i < delka; i++)
 	{
-		levy = new char[delka];
-		for(int i = 0; i < delka; i++)
-		{
-			levy[i] = terc[i];
-		}
-		delkaLevy = delka;
-		return;
+		if(i < 4)
+			levy[i] = data[i];
+		if(i >= 4 && < 8)
+			pravy[i-4] = data[i];
+		if(i >= 8)
+			date[i-8] = data[i];
 	}
+	levy[4] = '\0'
+	pravy[4] = '\0'
+	date[delka-8] = '\0'
+
+	file_t soubor;
+	if(pohlavi)
+		soubor = fileOpen(String("muzi"),eFO_WriteOnly | eFO_CreateIfNotExist | eFO_Append);
 	else
-	{
-		file_t soubor;
-		if(pohlavi)
-			soubor = fileOpen(String("muzi"),eFO_WriteOnly | eFO_CreateIfNotExist | eFO_Append);
-		else
-			soubor = fileOpen(String("zeny"),eFO_WriteOnly | eFO_CreateIfNotExist | eFO_Append);
-		pravy = terc;
-		//zapis do file ({levy}\t{pravy};)
-		fileWrite(soubor, levy, delkaLevy);
-		fileWrite(soubor, "\t", 1);
-		fileWrite(soubor,pravy, delka);
-		fileWrite(soubor, ";", 1);
-		fileWrite(soubor, "\n", 1);
-		delete[](levy);
-		levy = 0;
-		pravy = 0;
-		fileClose(soubor);
-	}
+		soubor = fileOpen(String("zeny"),eFO_WriteOnly | eFO_CreateIfNotExist | eFO_Append);
+	pravy = terc;
+	//zapis do file ({levy}\t{pravy};)
+	fileWrite(soubor, levy, 4);
+	fileWrite(soubor, "\t", 1);
+	fileWrite(soubor,pravy, 4);
+	fileWrite(soubor, "\t", 1);
+	fileWrite(soubor,date, delka-8);
+	fileWrite(soubor, ";", 1);
+	fileWrite(soubor, "\n", 1);
+	delete[](levy);
+	levy = 0;
+	pravy = 0;
+	fileClose(soubor);
 }
 
 
@@ -175,7 +178,7 @@ void IRAM_ATTR interruptHandler2()
 	udp.sendStringTo(IPAddress(192, 168, 4, 2), 6666, text);
 }
 
-char * zmensiString(String* retezec)
+/*char * zmensiString(String* retezec)
 {
 	char *vysledek = new char[5];
 	int tecka = 0;
@@ -211,7 +214,7 @@ char * zmensiString(String* retezec)
 	Serial.print(vysledek);
 	Serial.println("\n");
 	return vysledek;
-}
+}*/
 
 void onIndex(HttpRequest &request, HttpResponse &response)
 {
@@ -224,8 +227,9 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 	String add = "";
 	String left = "";
 	String right = "";
+	String date = "";
 	char *c = new char[1];
-	for(int i = 1; !fileIsEOF(soubor); i++)
+	while(!fileIsEOF(soubor))
 	{
 		fileRead(soubor,(void *) c,1);
 		Serial.println(c);
@@ -238,7 +242,7 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 			fileRead(soubor,(void *) c,1);
 		}
 		fileRead(soubor,(void *) c,1);
-		while(c[0] != ';')
+		while(c[0] != '\t')
 		{
 			right += c[0];
 			Serial.print("Precteno: ");
@@ -247,21 +251,31 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 			fileRead(soubor,(void *) c,1);
 		}
 		fileRead(soubor,(void *) c,1);
+		while(c[0] != ';')
+		{
+			date += c[0];
+			Serial.print("Precteno: ");
+			Serial.print(c[0]);
+			Serial.println("\n");
+			fileRead(soubor,(void *) c,1);
+		}
+		fileRead(soubor,(void *) c,1);
 		add += "addProudari(\"muzi\",";
-		add += String(i);
-		add += ",";
 			Serial.print("RIGHT: ");
 			Serial.print(right);
 			Serial.println("\n");
-		add += zmensiString(&right);
+		add += right;
 		add += ",";
-		add += zmensiString(&left);
+		add += left;
 			Serial.print("LEFT: ");
 			Serial.print(left);
 			Serial.println("\n");
+		add += ",";
+		add += date;
 		add += ");\n";
 		left = "";
 		right = "";
+		date = "";
 	}
 	vars["add"] = add;
 	fileClose(soubor);
