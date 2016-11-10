@@ -61,17 +61,31 @@ function mouse()
 }
 
 
-function addProudari(pohlavi,pProud,lProud)
+function addProudari(pohlavi, pProud, lProud, datum)
 {
+	var found = false;
 	proudari[pohlavi].pProud[proudari[pohlavi].pProud.length]=pProud;
 	proudari[pohlavi].lProud[proudari[pohlavi].lProud.length]=lProud;
+	for(var i = 0; i < proudari[pohlavi].day.datum.length && !found; i++)
+	{
+		if(proudari[pohlavi].day.datum[i] == datum)
+		{
+			found = true;
+			proudari[pohlavi].day.pocet[i]++;
+		}
+	}
+	if(!found)
+	{
+		proudari[pohlavi].day.datum[proudari[pohlavi].day.datum.length] = datum;
+		proudari[pohlavi].day.pocet[proudari[pohlavi].day.pocet.length] = 1;
+	}
 }
 
-function addDay(pohlavi,datum,pocet)
+/*function addDay(pohlavi,datum,pocet)
 {
 	proudari[pohlavi].day.datum[proudari[pohlavi].day.datum.length] = datum;
 	proudari[pohlavi].day.pocet[proudari[pohlavi].day.pocet.length] = pocet;
-}
+}*/
 
 function printStupnice(canvas,pohlavi)
 {
