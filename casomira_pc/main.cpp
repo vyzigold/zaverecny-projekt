@@ -75,7 +75,7 @@ std::string getDate()
     std::string date;
     time_t t = time(0);   // get time now
     struct tm * now = localtime( & t );
-    date = Convert(now->tm_day);
+    date = Convert(now->tm_mday);
     date += ".";
     date += Convert(now->tm_mon + 1);
     date += ".";
@@ -100,7 +100,7 @@ char * stringToChar(std::string neco)
 std::string upravCas(float cas)
 {
     std::string cislo = Convert(cas);
-    poziceTecky = cislo.find('.');
+    int poziceTecky = cislo.find('.');
     if(poziceTecky > 2)
         cislo = "9999";
     else
