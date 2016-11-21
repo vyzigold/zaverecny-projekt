@@ -108,21 +108,20 @@ void zapisCas(char* data, int delka)
 	{
 		if(i < 4)
 			levy[i] = data[i];
-		if(i >= 4 && < 8)
+		if(i >= 4 && i < 8)
 			pravy[i-4] = data[i];
 		if(i >= 8)
 			date[i-8] = data[i];
 	}
-	levy[4] = '\0'
-	pravy[4] = '\0'
-	date[delka-8] = '\0'
+	levy[4] = '\0';
+	pravy[4] = '\0';
+	date[delka-8] = '\0';
 
 	file_t soubor;
 	if(pohlavi)
 		soubor = fileOpen(String("muzi"),eFO_WriteOnly | eFO_CreateIfNotExist | eFO_Append);
 	else
 		soubor = fileOpen(String("zeny"),eFO_WriteOnly | eFO_CreateIfNotExist | eFO_Append);
-	pravy = terc;
 	//zapis do file ({levy}\t{pravy};)
 	fileWrite(soubor, levy, 4);
 	fileWrite(soubor, "\t", 1);
@@ -327,19 +326,68 @@ void onFile(HttpRequest &request, HttpResponse &response)
 	}
 }
 
+Timer downloadTimer;
+HttpClient downloadClient;
+int dowfid = 0;
+void downloadContentFiles()
+{
+	if (downloadClient.isProcessing()) return; // Please, wait.
+
+	if (downloadClient.isSuccessful())
+		dowfid++; // Success. Go to next file!
+	downloadClient.reset(); // Reset current download status
+
+	if (dowfid == 0)
+		downloadClient.downloadFile("192.168.4.2/index.html");
+	else if (dowfid == 1)
+		downloadClient.downloadFile("192.168.4.2/bootstrap.css.gz");
+	else if (dowfid == 2)
+		downloadClient.downloadFile("192.168.4.2/jquery.js.gz");
+	else if (dowfid == 3)
+		downloadClient.downloadFile("192.168.4.2/zeny.html");
+	else if (dowfid == 4)
+		downloadClient.downloadFile("192.168.4.2/casy.html");
+	else if (dowfid == 5)
+		downloadClient.downloadFile("192.168.4.2/script.js.gz");
+	else if (dowfid == 6)
+		downloadClient.downloadFile("192.168.4.2/update.html");
+	else
+	{
+		// Content download was completed
+		downloadTimer.stop();
+	}
+}
+
 void onUpdate(HttpRequest &request, HttpResponse &response)
 {
-	if(request.getQueryParameter("offset", String("0")) != "0")
+	response.sendString(request.getQueryParameter("web", String("0")));
+	if(downloadTimer.isStarted())
 	{
-		String offset = "0x";
-		offset+=request.getQueryParameter("offset");
-		airUpdater.addItem(atoi(offset.c_str()), "192.168.4.2/spiff_rom.bin");
-		response.sendString(String(atoi(offset.c_str())));
+		response.sendString(String("Chvilku strpeni"));
+	}
+	else if(request.getQueryParameter("firmware", String("0")) == "true")
+	{
+		response.sendString(String("update firmware prave probiha"));
 		airUpdater.start();
+	}
+	else if(request.getQueryParameter("web", String("0")) == "true")
+	{
+		Serial.println("Im in");
+		fileDelete("index.html");
+		fileDelete("zeny.html");
+		fileDelete("casy.html");
+		fileDelete("update.html");
+		fileDelete("bootstrap.css.gz");
+		fileDelete("jquery.js.gz");
+		fileDelete("script.js.gz");
+
+		response.sendString(String("probiha update"));
+
+		downloadTimer.start();
 	}
 	else
 	{
-		response.setCache(86400, true); // It's important to use cache for better performance.
+		
 		response.sendFile("update.html");
 	}
 
@@ -399,5 +447,7 @@ void init()
 
 	airUpdater.addItem(0x0000, "192.168.4.2/0x00000.bin");
 	airUpdater.addItem(0x9000, "192.168.4.2/0x09000.bin");
+
+	downloadTimer.initializeMs(3000, downloadContentFiles);
 }
 
