@@ -124,11 +124,10 @@ void zapisCas(char* data, int delka)
 		soubor = fileOpen(String("zeny"),eFO_WriteOnly | eFO_CreateIfNotExist | eFO_Append);
 	//zapis do file ({levy}\t{pravy};)
 	fileWrite(soubor, levy, 4);
-	fileWrite(soubor, "\t", 1);
-	fileWrite(soubor,pravy, 4);
-	fileWrite(soubor, "\t", 1);
-	fileWrite(soubor,date, delka-8);
 	fileWrite(soubor, ";", 1);
+	fileWrite(soubor,pravy, 4);
+	fileWrite(soubor, ";", 1);
+	fileWrite(soubor,date, delka-8);
 	fileWrite(soubor, "\n", 1);
 	delete[](levy);
 	levy = 0;
@@ -218,8 +217,16 @@ void IRAM_ATTR interruptHandler2()
 void onIndex(HttpRequest &request, HttpResponse &response)
 {
 	file_t soubor;
-	soubor = fileOpen(String("muzi"),eFO_ReadOnly);
-	TemplateFileStream *tmpl = new TemplateFileStream("index.html");
+	if(request.getPath == "zeny.html")
+	{
+		soubor = fileOpen(String("zeny"),eFO_ReadOnly);
+		TemplateFileStream *tmpl = new TemplateFileStream("zeny.html");
+	}
+	else
+	{
+		soubor = fileOpen(String("muzi"),eFO_ReadOnly);
+		TemplateFileStream *tmpl = new TemplateFileStream("index.html");
+	}
 	auto &vars = tmpl->variables();
 
 
@@ -232,7 +239,7 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 	{
 		fileRead(soubor,(void *) c,1);
 		Serial.println(c);
-		while(c[0] != '\t')
+		while(c[0] != ';')
 		{
 			left += c[0];
 			Serial.print("Precteno: ");
@@ -241,7 +248,7 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 			fileRead(soubor,(void *) c,1);
 		}
 		fileRead(soubor,(void *) c,1);
-		while(c[0] != '\t')
+		while(c[0] != ';')
 		{
 			right += c[0];
 			Serial.print("Precteno: ");
@@ -250,7 +257,7 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 			fileRead(soubor,(void *) c,1);
 		}
 		fileRead(soubor,(void *) c,1);
-		while(c[0] != ';')
+		while(c[0] != '\n')
 		{
 			date += c[0];
 			Serial.print("Precteno: ");
@@ -258,8 +265,10 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 			Serial.println("\n");
 			fileRead(soubor,(void *) c,1);
 		}
-		fileRead(soubor,(void *) c,1);
-		add += "addProudari(\"muzi\",";
+		if(request.getPath == "zeny.html")
+			add += "addProudari(\"zeny\",";
+		else
+			add += "addProudari(\"muzi\",";
 			Serial.print("RIGHT: ");
 			Serial.print(right);
 			Serial.println("\n");
@@ -285,30 +294,59 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 
 void onExport(HttpRequest &request, HttpResponse &response)
 {
+	if(request.getQueryParameter(String("pohlavi"), String("0")) == String("0"))
+		return;
 	String csv("levy;pravy\n");
 	file_t soubor;
-	soubor = fileOpen(request.getQueryParameter(String("pohlavi"), String("")),eFO_ReadOnly);
+	soubor = fileOpen(request.getQueryParameter(String("pohlavi"), String("0")),eFO_ReadOnly);
 
 	char *c = new char[1];
-	fileRead(soubor,(void *) c,1);
 	while(!fileIsEOF(soubor))
 	{
 		fileRead(soubor,(void *) c,1);
-		if(c[0] != ';')
-		{
-			if(c[0] == '\t')
-				c[0] = ';';
-
-			csv += c[0];
-
-			if(c[0] == '\n')
-				fileRead(soubor,(void *) c,1);
-		}
+		csv += c[0];
 	}
 	fileClose(soubor);
 	delete[](c);
 
 	response.sendString(csv);
+}
+
+
+void onDelete(HttpRequest &request, HttpResponse &response)
+{
+	String id = request.getQueryParameter(String("id"), String("0"));
+	if(id == String("0"))
+		return;
+	file_t soubor;
+	String jmenoSouboru;
+	if(id[0] == 'm')
+		jmenoSouboru = "muzi";
+	if(id[0] == 'z')
+		jmenoSouboru = "zeny";
+	fileOpen(&jmenoSouboru[0],eFO_ReadOnly)
+	String nacteno = "";
+	char *c = new char[1];
+	while(!fileIsEOF(soubor))
+	{
+		fileRead(soubor,(void *) c,1);
+		nacteno+=c;
+	}
+	fileClose(soubor);
+	delete[](c);
+	fileDelete(&jmenoSouboru[0]);
+	soubor = fileOpen(&jmenoSouboru[0],eFO_WriteOnly | eFO_Append | eFO_CreateIfNotExist);
+	int zaznam = 0;
+	for(int i = 0; i < nacteno.length(); i++)
+	{
+		if(zaznam != id[1])
+			fileWrite(soubor, nacteno[i]; 1);
+		if(nacteno[i] == '\n')
+			zaznam++;
+	}
+	response.setCache(86400, true); // It's important to use cache for better performance.
+	response.sendFile(casy.html);
+	return;
 }
 
 void onFile(HttpRequest &request, HttpResponse &response)
@@ -397,7 +435,10 @@ void startWebServer()
 {
 	server.listen(80);
 	server.addPath("/", onIndex);
+	server.addPath("/index.html", onIndex);
+	server.addPath("/zeny.html", onIndex);
 	server.addPath("/export.csv", onExport);
+	server.addPath("/delete", onDelete);
 	server.addPath("/update", onUpdate);
 	server.setDefaultHandler(onFile);
 
