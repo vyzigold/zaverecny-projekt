@@ -59,6 +59,11 @@
             background-color: rgb(50,150,50);
             float: left;
         }
+
+        tbody tr:hover
+        {
+            background-color: rgb(80,180,80);
+        }
     </style>
   </head>
 
@@ -73,11 +78,11 @@
         	<a class = "btn btn-primary menu_polozka" role="button" href="casy.html">Časy</a>
         </nav>
         
-        <table id="muzi" class="table tabulka table-bordered table-hover">
+        <table id="muzi" class="table tabulka table-bordered">
             <thead>
                 <tr>
-                    <th colspan="3">
-                        muzi
+                    <th colspan="3" style="text-align: center">
+                        Muži
                     </th>
                 </tr>
                 <tr>
@@ -101,18 +106,18 @@
                         <p>28.64</p>
                     </td>
                     <td>
-                        <p>smazat</p>
+                        <a class = "btn btn-danger" role="button" href="/delete?id=m0">Smazat</a>
                     </td>
                 </tr>
             </tbody>
         </table>
 
 
-        <table id="zeny" class="table tabulka table-bordered table-hover">
+        <table id="zeny" class="table tabulka table-bordered">
             <thead>
                 <tr>
-                    <th colspan="3">
-                        zeny
+                    <th colspan="3" style="text-align: center">
+                        Ženy
                     </th>
                 </tr>
                 <tr>
@@ -136,15 +141,17 @@
                         <p>28.64</p>
                     </td>
                     <td>
-                        <p>smazat</p>
+                        <a class = "btn btn-danger" role="button" href="/delete?id=z0">Smazat</a>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <a href="/export?pohlavi=muzi" download class="btn btn-primary menu_polozka" role="button">export</a>
-        <a href="/export?pohlavi=zeny" download class="btn btn-primary menu_polozka" role="button">export</a>
+        <div>
+            <a href="/export.csv?pohlavi=muzi" download class="btn btn-primary menu_polozka" style="float:left;margin-left: 26vw" role="button">export muži</a>
+            <a href="/export.csv?pohlavi=zeny" download class="btn btn-primary menu_polozka" style="float:right;margin-right: 32vw" role="button">export ženy</a>
+        </div>
 		
-        <form action="" method="get">
+        <form action="" method="get" style="width:900px; margin: auto">
             Kategorie: <select name="pohlavi">
                 <option value="muzi">Muži</option>
                 <option value="zeny">Ženy</option>
