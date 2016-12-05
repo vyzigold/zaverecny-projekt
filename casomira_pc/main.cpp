@@ -10,6 +10,10 @@
 #include <sstream>
 #include <ctime>
 
+
+#include "GameWindow.hpp"
+#include "MenuButton.hpp"
+
 std::string Convert (float number){
     std::ostringstream buff;
     buff<<number;
@@ -109,6 +113,11 @@ std::string upravCas(float cas)
         cislo.erase(4,cislo.length()-4);
     }
     return cislo;
+}
+
+void buttonPress(bool quit)
+{
+    quit = true;
 }
 
 int main(int argc, char **argv)
@@ -222,9 +231,28 @@ int main(int argc, char **argv)
     int poziceTecky = 0;
     if(!posliPacket("s",packetOut,&socketOut))
         printf("%s",SDLNet_GetError());
+    
+    GameWindow *okno = new GameWindow(std::string("Casomira"),500,500,
+            SDL_WINDOW_RESIZABLE|SDL_WINDOW_INPUT_FOCUS|SDL_WINDOW_MOUSE_FOCUS|SDL_WINDOW_SHOWN,
+            SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED);
+    if(okno->konsChyba)
+    {
+        std::cout << "Chyba pri vytvareni okna";
+    }
+    MenuButton levyButton = MenuButton(okno->getRenderer(),std::string("img/button.png"),okno->getWidth()/2-1,okno->getHeight()/3,0,0);
+    levyButton.render();
+    MenuButton pravyButton = MenuButton(okno->getRenderer(),std::string("img/button.png"),okno->getWidth()/2-1,okno->getHeight()/3,okno->getWidth()/2,0);
+    pravyButton.render();
+    MenuButton muziZenyButton = MenuButton(okno->getRenderer(),std::string("img/button.png"),okno->getWidth(),okno->getHeight()/10,0,okno->getHeight()/3);
+    muziZenyButton.render();
+    MenuButton startButton = MenuButton(okno->getRenderer(),std::string("img/button.png"),okno->getWidth(),okno->getHeight()-(okno->getHeight()/3+okno->getHeight()/10),0,okno->getHeight()/3+okno->getHeight()/10);
+    startButton.render();
+    SDL_Point poziceKliknuti;
+    SDL_Event e;
+    
     while(!quit)
     {
-
+        
         if(SDLNet_UDP_Recv(socketIn, packetIn)) {
             prijato = packetIn->data[0];
             switch(prijato)
@@ -251,8 +279,56 @@ int main(int argc, char **argv)
                     break;
             }
         }
-        else
-            printf("%s",SDLNet_GetError());
+        if(SDL_PollEvent(&e))
+        {
+            if(e.type==SDL_QUIT)
+                quit=true;
+            else if (e.type==SDL_KEYDOWN)
+            {
+                switch(e.key.keysym.sym)
+                {
+                    case SDLK_ESCAPE:
+                        quit = true;
+                        break;
+                }
+            }
+            else if(e.type == SDL_MOUSEBUTTONDOWN)
+            {
+                poziceKliknuti.x = e.button.x;
+                poziceKliknuti.y = e.button.y;
+                if(levyButton.isIn(poziceKliknuti))
+                    std::cout << "kliknuto v buttonu";
+                std::cout << poziceKliknuti.x << "    " << poziceKliknuti.y << std::endl;
+            }
+            else if (e.type == SDL_WINDOWEVENT) 
+            {
+                switch (e.window.event) 
+                {
+                    case SDL_WINDOWEVENT_RESIZED:
+                        okno->clear();
+                        levyButton.setWidth(okno->getWidth()/2-1);
+                        levyButton.setHeight(okno->getHeight()/3);
+                        levyButton.setPosX(0);
+                        levyButton.render();
+                        pravyButton.setWidth(okno->getWidth()/2-1);
+                        pravyButton.setHeight(okno->getHeight()/3);
+                        pravyButton.setPosX(okno->getWidth()/2);
+                        pravyButton.render();
+                        muziZenyButton.setWidth(okno->getWidth());
+                        muziZenyButton.setHeight(okno->getHeight()/10);
+                        muziZenyButton.setPosX(0);
+                        muziZenyButton.setPosY(okno->getHeight()/3);
+                        muziZenyButton.render();
+                        startButton.setWidth(okno->getWidth());
+                        startButton.setHeight(okno->getHeight()-(okno->getHeight()/3+okno->getHeight()/10));
+                        startButton.setPosX(0);
+                        startButton.setPosY(okno->getHeight()/3+okno->getHeight()/10);
+                        startButton.render();
+                        break;
+                }
+            }
+        }
+        
         if(kbhit())
         {
             znak = getchar();
@@ -351,8 +427,8 @@ int main(int argc, char **argv)
             else
                 printf("                      %f\n",pravy);
         }
-        if(spozdeni)
-            SDL_Delay(spozdeni);
+        SDL_Delay(spozdeni);
+        SDL_RenderPresent(okno->getRenderer());
     }
     
     //uvolneni pameti
@@ -360,6 +436,8 @@ int main(int argc, char **argv)
     Mix_FreeChunk(druhy);
     Mix_FreeChunk(treti);
     Mix_FreeChunk(ctvrty);
+    
+    delete okno;
 
     Mix_Quit();
     

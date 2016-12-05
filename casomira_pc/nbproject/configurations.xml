@@ -4,6 +4,10 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>GameWindow.hpp</itemPath>
+      <itemPath>Image.hpp</itemPath>
+      <itemPath>MenuButton.hpp</itemPath>
+      <itemPath>Text.hpp</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -12,6 +16,10 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>GameWindow.cpp</itemPath>
+      <itemPath>Image.cpp</itemPath>
+      <itemPath>MenuButton.cpp</itemPath>
+      <itemPath>Text.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -40,9 +48,27 @@
             <linkerOptionItem>-lSDL2</linkerOptionItem>
             <linkerOptionItem>-lSDL2_net</linkerOptionItem>
             <linkerOptionItem>-lSDL2_mixer</linkerOptionItem>
+            <linkerOptionItem>-lSDL2_image</linkerOptionItem>
+            <linkerOptionItem>-lSDL2_ttf</linkerOptionItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="GameWindow.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GameWindow.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Image.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Image.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MenuButton.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MenuButton.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Text.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Text.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
@@ -66,6 +92,22 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="GameWindow.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GameWindow.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Image.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Image.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MenuButton.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MenuButton.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Text.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Text.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
