@@ -8,6 +8,7 @@
 #ifndef MENUBUTTON_HPP
 #define	MENUBUTTON_HPP
 #include "Image.hpp"
+#include "Text.hpp"
 #include <SDL2/SDL.h>
 #include <string>
 #include <iostream>
@@ -16,6 +17,7 @@ class MenuButton {
 public:
     //path obrazek, width, height,posX,posY
     MenuButton(SDL_Renderer*,std::string,int,int,int,int);
+    MenuButton(SDL_Renderer*,std::string,int,int,int,int, Text*);
     void setPosX(int);
     void setPosY(int);
     void setWidth(int);
@@ -25,6 +27,7 @@ public:
     MenuButton(const MenuButton& orig);
     virtual ~MenuButton();
 private:
+    Text *text;
     Image* obrazek;
     SDL_Renderer *rend;
     int poradi;

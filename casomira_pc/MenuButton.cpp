@@ -19,6 +19,23 @@
 MenuButton::MenuButton(SDL_Renderer *renderer, std::string pathObrazek, int w, int h, int posX, int posY) {
     this->rend = renderer;
     obrazek = new Image(pathObrazek, w, h, posX, posY, 180);
+    this->text = NULL;
+}
+
+/**
+ * @param renderer SDL_Renderer
+ * @param pathObrazek path k obrázku
+ * @param w šířka
+ * @param h výška
+ * @param posX x-ová pozice
+ * @param posY y-ová pozice
+ * @param text ukazatel na text
+ */
+
+MenuButton::MenuButton(SDL_Renderer *renderer, std::string pathObrazek, int w, int h, int posX, int posY, Text *text) {
+    this->rend = renderer;
+    obrazek = new Image(pathObrazek, w, h, posX, posY, 180);
+    this->text = text;
 }
 
 /**
@@ -47,6 +64,23 @@ bool MenuButton::render(){
         std::cout << "Nelze vyrendrovat" << SDL_GetError();
         SDL_DestroyTexture(textura);
         return 0;
+    }
+    
+    if(text != NULL)
+    {
+        textura = SDL_CreateTextureFromSurface(rend, text->getSurface());
+        if(textura == NULL)
+        {
+            std::cout<<"Textura se nemohla vystvorit!"<<SDL_GetError();
+            return 0;
+        }
+
+        if(SDL_RenderCopyEx(rend,textura,NULL,&rect,obrazek->getAngle(),obrazek->getCenter(),flip)!=0)
+        {
+            std::cout << "Nelze vyrendrovat" << SDL_GetError();
+            SDL_DestroyTexture(textura);
+            return 0;
+        }
     }
     SDL_DestroyTexture(textura);
     return true;

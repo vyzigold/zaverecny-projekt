@@ -13,6 +13,7 @@
 
 #include "GameWindow.hpp"
 #include "MenuButton.hpp"
+#include "Text.hpp"
 
 std::string Convert (float number){
     std::ostringstream buff;
@@ -239,7 +240,8 @@ int main(int argc, char **argv)
     {
         std::cout << "Chyba pri vytvareni okna";
     }
-    MenuButton levyButton = MenuButton(okno->getRenderer(),std::string("img/button.png"),okno->getWidth()/2-1,okno->getHeight()/3,0,0);
+    Text *text = new Text("ahoj",300);
+    MenuButton levyButton = MenuButton(okno->getRenderer(),std::string("img/button.png"),okno->getWidth()/2-1,okno->getHeight()/3,0,0, text);
     levyButton.render();
     MenuButton pravyButton = MenuButton(okno->getRenderer(),std::string("img/button.png"),okno->getWidth()/2-1,okno->getHeight()/3,okno->getWidth()/2,0);
     pravyButton.render();
@@ -249,6 +251,7 @@ int main(int argc, char **argv)
     startButton.render();
     SDL_Point poziceKliknuti;
     SDL_Event e;
+    
     
     while(!quit)
     {
@@ -289,6 +292,10 @@ int main(int argc, char **argv)
                 {
                     case SDLK_ESCAPE:
                         quit = true;
+                        break;
+                    case SDLK_RETURN:
+                        text->setHodnota(text->getHodnota()+"aaaa");
+                        levyButton.render();
                         break;
                 }
             }
