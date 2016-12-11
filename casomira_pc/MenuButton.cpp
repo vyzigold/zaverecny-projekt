@@ -68,14 +68,40 @@ bool MenuButton::render(){
     
     if(text != NULL)
     {
+        SDL_Point velikostTextu;
+        float pomer = 0;
+        velikostTextu.x = text->getTextSize().x;
+        velikostTextu.y = text->getTextSize().y;
+        if(((float)obrazek->getW() / 100) * 80 < velikostTextu.x)
+        {
+            pomer = ((float)obrazek->getW() / 100) * 80 / (float)velikostTextu.x;
+            velikostTextu.x = velikostTextu.x*pomer;
+            velikostTextu.y = velikostTextu.y*pomer;
+        }
+        if(((float)obrazek->getH() / 100) * 80 < velikostTextu.y)
+        {
+            pomer = ((float)obrazek->getH() / 100) * 80 / (float)velikostTextu.y;
+            velikostTextu.x = velikostTextu.x*pomer;
+            velikostTextu.y = velikostTextu.y*pomer;
+        }
+        rect.x = obrazek->getPos()->x + (obrazek->getW()/2) - (velikostTextu.x/2);
+        rect.y = obrazek->getPos()->y + (obrazek->getH()/2) - (velikostTextu.y/2);
+        rect.w = velikostTextu.x;
+        rect.h = velikostTextu.y;
         textura = SDL_CreateTextureFromSurface(rend, text->getSurface());
         if(textura == NULL)
         {
             std::cout<<"Textura se nemohla vystvorit!"<<SDL_GetError();
             return 0;
         }
+        
+        
+        SDL_Point center;
 
-        if(SDL_RenderCopyEx(rend,textura,NULL,&rect,obrazek->getAngle(),obrazek->getCenter(),flip)!=0)
+        center.x = velikostTextu.x/2;
+        center.y = velikostTextu.y/2;
+
+        if(SDL_RenderCopyEx(rend,textura,NULL,&rect,obrazek->getAngle(),&center,flip)!=0)
         {
             std::cout << "Nelze vyrendrovat" << SDL_GetError();
             SDL_DestroyTexture(textura);

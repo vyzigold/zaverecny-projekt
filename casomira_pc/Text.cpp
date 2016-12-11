@@ -107,6 +107,16 @@ SDL_Point Text:: getTextSize()
     }
 }
 
+
+SDL_Point* Text::getCenter()
+{
+    SDL_Point *center;
+    
+    center->x = ceil((float)this->getTextSize().x/2);
+    center->y = ceil((float)this->getTextSize().y/2);
+    return center;
+}
+
 Text::Text(const Text& orig) {
 }
 

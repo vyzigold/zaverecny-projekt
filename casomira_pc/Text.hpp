@@ -21,6 +21,7 @@ public:
     SDL_Surface *getSurface();
     std::string getHodnota();
     SDL_Point getTextSize();
+    SDL_Point *getCenter();
     void setHodnota(std::string);
     virtual ~Text();
 private:

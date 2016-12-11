@@ -165,6 +165,7 @@ bool GameWindow::createRenderer()
         return 0;
     }
     //prebarveni obrazovky
+    SDL_SetRenderDrawColor(renderer, 68, 65, 65, 255);
     SDL_RenderClear(renderer);
     SDL_RenderPresent(renderer);
     return 1;

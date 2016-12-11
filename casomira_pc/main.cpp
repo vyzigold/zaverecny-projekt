@@ -240,14 +240,41 @@ int main(int argc, char **argv)
     {
         std::cout << "Chyba pri vytvareni okna";
     }
-    Text *text = new Text("ahoj",300);
-    MenuButton levyButton = MenuButton(okno->getRenderer(),std::string("img/button.png"),okno->getWidth()/2-1,okno->getHeight()/3,0,0, text);
+    Text *levyText = new Text("0",400);
+    Text *pravyText = new Text("0",400);
+    Text *muziZenyText = new Text("Muzi",400);
+    Text *startText = new Text("START",400);
+    MenuButton levyButton = MenuButton(okno->getRenderer(),
+            std::string("img/terc.png"),                                  //obrázek pozadí
+            (okno->getWidth() - 3*((int)(((float)okno->getWidth()/100)*2)))/2,                                           //šířka
+            okno->getHeight()/3 - (((int)(((float)okno->getHeight()/100)*2))+((int)(((float)okno->getHeight()/100)*1))),                                            //výška
+            (int)(((float)okno->getWidth()/100)*2),                                                              //pozice x
+            (int)(((float)okno->getHeight()/100)*2),                                                              //pozice y
+            levyText);                                                      //ukazatel na text
     levyButton.render();
-    MenuButton pravyButton = MenuButton(okno->getRenderer(),std::string("img/button.png"),okno->getWidth()/2-1,okno->getHeight()/3,okno->getWidth()/2,0);
+    MenuButton pravyButton = MenuButton(okno->getRenderer(),
+            std::string("img/terc.png"),                                  //obrázek pozadí
+            (okno->getWidth() - 3*((int)(((float)okno->getWidth()/100)*2)))/2,                                           //šířka
+            okno->getHeight()/3 - (((int)(((float)okno->getHeight()/100)*2))+((int)(((float)okno->getHeight()/100)*1))),                                            //výška
+            (okno->getWidth()/2) + (int)(((float)okno->getWidth()/100)*1),                                             //pozice x
+            (int)(((float)okno->getHeight()/100)*2),                                                              //pozice y
+            pravyText);                                                     //ukazatel na text
     pravyButton.render();
-    MenuButton muziZenyButton = MenuButton(okno->getRenderer(),std::string("img/button.png"),okno->getWidth(),okno->getHeight()/10,0,okno->getHeight()/3);
+    MenuButton muziZenyButton = MenuButton(okno->getRenderer(),
+            std::string("img/muzi.png"),                                  //obrázek pozadí
+            okno->getWidth() - 2*((int)(((float)okno->getWidth()/100)*2)),                                               //šířka
+            (okno->getHeight() - 4*((int)(((float)okno->getHeight()/100)*2)))/10  - (int)(((float)okno->getHeight()/100)*1),                                           //výška
+            (int)(((float)okno->getWidth()/100)*2),                                                              //pozice x
+            okno->getHeight()/3 + ((int)(((float)okno->getHeight()/100)*1)),                                            //pozice y
+            muziZenyText);                                                  //ukazatel na text
     muziZenyButton.render();
-    MenuButton startButton = MenuButton(okno->getRenderer(),std::string("img/button.png"),okno->getWidth(),okno->getHeight()-(okno->getHeight()/3+okno->getHeight()/10),0,okno->getHeight()/3+okno->getHeight()/10);
+    MenuButton startButton = MenuButton(okno->getRenderer(),
+            std::string("img/start.png"),                                  //obrázek pozadí
+            okno->getWidth() - 2*((int)(((float)okno->getWidth()/100)*2)),                                               //šířka
+            (okno->getHeight() - ((int)(((float)okno->getHeight()/100)*3)))-(okno->getHeight()/3+okno->getHeight()/10),   //výška
+            (int)(((float)okno->getWidth()/100)*2),                                                              //pozice x
+            okno->getHeight()/3+okno->getHeight()/10 + (int)(((float)okno->getHeight()/100)*1),                       //pozice y
+            startText);                                                     //ukazatel na text
     startButton.render();
     SDL_Point poziceKliknuti;
     SDL_Event e;
@@ -293,10 +320,6 @@ int main(int argc, char **argv)
                     case SDLK_ESCAPE:
                         quit = true;
                         break;
-                    case SDLK_RETURN:
-                        text->setHodnota(text->getHodnota()+"aaaa");
-                        levyButton.render();
-                        break;
                 }
             }
             else if(e.type == SDL_MOUSEBUTTONDOWN)
@@ -313,23 +336,23 @@ int main(int argc, char **argv)
                 {
                     case SDL_WINDOWEVENT_RESIZED:
                         okno->clear();
-                        levyButton.setWidth(okno->getWidth()/2-1);
-                        levyButton.setHeight(okno->getHeight()/3);
-                        levyButton.setPosX(0);
+                        levyButton.setWidth((okno->getWidth() - 3*((int)(((float)okno->getWidth()/100)*2)))/2);
+                        levyButton.setHeight(okno->getHeight()/3 - (((int)(((float)okno->getHeight()/100)*2))+((int)(((float)okno->getHeight()/100)*1))));
+                        levyButton.setPosX((int)(((float)okno->getWidth()/100)*2));
                         levyButton.render();
-                        pravyButton.setWidth(okno->getWidth()/2-1);
-                        pravyButton.setHeight(okno->getHeight()/3);
-                        pravyButton.setPosX(okno->getWidth()/2);
+                        pravyButton.setWidth((okno->getWidth() - 3*((int)(((float)okno->getWidth()/100)*2)))/2);
+                        pravyButton.setHeight(okno->getHeight()/3 - (((int)(((float)okno->getHeight()/100)*2))+((int)(((float)okno->getHeight()/100)*1))));
+                        pravyButton.setPosX((okno->getWidth()/2) + (int)(((float)okno->getWidth()/100)*1));
                         pravyButton.render();
-                        muziZenyButton.setWidth(okno->getWidth());
-                        muziZenyButton.setHeight(okno->getHeight()/10);
-                        muziZenyButton.setPosX(0);
-                        muziZenyButton.setPosY(okno->getHeight()/3);
+                        muziZenyButton.setWidth(okno->getWidth() - 2*((int)(((float)okno->getWidth()/100)*2)));
+                        muziZenyButton.setHeight((okno->getHeight() - 4*((int)(((float)okno->getHeight()/100)*2)))/10  - (int)(((float)okno->getHeight()/100)*1));
+                        muziZenyButton.setPosX((int)(((float)okno->getWidth()/100)*2));
+                        muziZenyButton.setPosY(okno->getHeight()/3 + ((int)(((float)okno->getHeight()/100)*1)));
                         muziZenyButton.render();
-                        startButton.setWidth(okno->getWidth());
-                        startButton.setHeight(okno->getHeight()-(okno->getHeight()/3+okno->getHeight()/10));
-                        startButton.setPosX(0);
-                        startButton.setPosY(okno->getHeight()/3+okno->getHeight()/10);
+                        startButton.setWidth(okno->getWidth() - 2*((int)(((float)okno->getWidth()/100)*2)));
+                        startButton.setHeight((okno->getHeight() - ((int)(((float)okno->getHeight()/100)*3)))-(okno->getHeight()/3+okno->getHeight()/10));
+                        startButton.setPosX((int)(((float)okno->getWidth()/100)*2));
+                        startButton.setPosY(okno->getHeight()/3+okno->getHeight()/10 + (int)(((float)okno->getHeight()/100)*1));
                         startButton.render();
                         break;
                 }
