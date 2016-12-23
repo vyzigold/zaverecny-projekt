@@ -289,23 +289,45 @@ int main(int argc, char **argv)
             {
                 case 'm':
                     pohlavi = true;
+                    muziZenyButton.setImage(std::string("img/muzi.png"));
+                    muziZenyText->setHodnota("Muzi");
+                    muziZenyButton.render();
                     break;
                 case 'z':
                     pohlavi = false;
+                    muziZenyButton.setImage(std::string("img/zeny.png"));
+                    muziZenyText->setHodnota("Zeny");
+                    muziZenyButton.render();
                     break;
                 case 'p':
                     if(pravy == 0)
+                    {
                         pravy = ((float)(SDL_GetTicks() - start))/(float)1000;
+                        pravyText->setHodnota(Convert(pravy));
+                        pravyButton.render();
+                    }
                     break;
                 case 'l':
                     if(levy == 0)
+                    {
                         levy = ((float)(SDL_GetTicks() - start))/(float)1000;
+                        levyText->setHodnota(Convert(levy));
+                        levyButton.render();
+                    }
                     break;
                 case '1':
                     printf("terce jsou v poradku\n");
+                    levyButton.setImage(std::string("img/start.png"));
+                    pravyButton.setImage(std::string("img/start.png"));
+                    levyButton.render();
+                    pravyButton.render();
                     break;
                 case '0':
                     printf("CHYBA! je potreba zvednout terce\n");
+                    levyButton.setImage(std::string("img/stop.png"));
+                    pravyButton.setImage(std::string("img/stop.png"));
+                    levyButton.render();
+                    pravyButton.render();
                     break;
             }
         }
@@ -320,15 +342,147 @@ int main(int argc, char **argv)
                     case SDLK_ESCAPE:
                         quit = true;
                         break;
+                    case SDLK_SPACE:
+                        start = SDL_GetTicks();
+                        if(started)
+                        {
+                            started = false;
+                            startButton.setImage(std::string("img/start.png"));
+                            startText->setHodnota(std::string("START"));
+                            startButton.render();
+                        }
+                        else
+                        {
+                            started = true;
+                            startButton.setImage(std::string("img/stop.png"));
+                            startText->setHodnota(std::string("STOP"));
+                            startButton.render();
+                            if(vystrel)
+                            {
+                                zvuk = rand() % 4;
+                                switch(zvuk)
+                                {
+                                    case 0:
+                                        Mix_PlayChannel( -1, prvni, 0 );
+                                        break;
+                                    case 1:
+                                        Mix_PlayChannel( -1, druhy, 0 );
+                                        break;
+                                    case 2:
+                                        Mix_PlayChannel( -1, treti, 0 );
+                                        break;
+                                    case 3:
+                                        Mix_PlayChannel( -1, ctvrty, 0 );
+                                        break;
+                                }
+                            }
+                            pravy = 0;
+                            levy = 0;
+                        }
+                        zvuk = rand() % 4;
+                        break;
+                    case SDLK_m:
+                        if(!posliPacket("m",packetOut,&socketOut))
+                            printf("%s",SDLNet_GetError());
+                        pohlavi = true;
+                        muziZenyButton.setImage(std::string("img/muzi.png"));
+                        muziZenyText->setHodnota("Muzi");
+                        muziZenyButton.render();
+                        break;
+                    case SDLK_z:
+                        if(!posliPacket("z",packetOut,&socketOut))
+                            printf("%s",SDLNet_GetError());
+                        pohlavi = false;
+                        muziZenyButton.setImage(std::string("img/zeny.png"));
+                        muziZenyText->setHodnota("Zeny");
+                        muziZenyButton.render();
+                        break;
+                    case SDLK_t:
+                        if(!posliPacket("t",packetOut,&socketOut))
+                            printf("%s",SDLNet_GetError());
+                        break;
+                    case SDLK_s:
+                        if(vystrel)
+                            vystrel = false;
+                        else
+                            vystrel = true;
+                        break;
+                    case 'q':
+                        quit = true;
+                        break;
                 }
             }
             else if(e.type == SDL_MOUSEBUTTONDOWN)
             {
                 poziceKliknuti.x = e.button.x;
                 poziceKliknuti.y = e.button.y;
-                if(levyButton.isIn(poziceKliknuti))
-                    std::cout << "kliknuto v buttonu";
-                std::cout << poziceKliknuti.x << "    " << poziceKliknuti.y << std::endl;
+                if(levyButton.isIn(poziceKliknuti) || pravyButton.isIn(poziceKliknuti))
+                {
+                    if(!posliPacket("t",packetOut,&socketOut))
+                        printf("%s",SDLNet_GetError());
+                }
+                if(muziZenyButton.isIn(poziceKliknuti))
+                {
+                    if(pohlavi)
+                    {
+                        if(!posliPacket("z",packetOut,&socketOut))
+                            printf("%s",SDLNet_GetError());
+                        pohlavi = false;
+                        muziZenyButton.setImage(std::string("img/zeny.png"));
+                        muziZenyText->setHodnota("Zeny");
+                        muziZenyButton.render();
+                    }
+                    else
+                    {
+                        if(!posliPacket("m",packetOut,&socketOut))
+                            printf("%s",SDLNet_GetError());
+                        pohlavi = true;
+                        muziZenyButton.setImage(std::string("img/muzi.png"));
+                        muziZenyText->setHodnota("Muzi");
+                        muziZenyButton.render();
+                    }
+                            
+                }
+                if(startButton.isIn(poziceKliknuti))
+                {
+                    start = SDL_GetTicks();
+                        if(started)
+                        {
+                            started = false;
+                            startButton.setImage(std::string("img/start.png"));
+                            startText->setHodnota(std::string("START"));
+                            startButton.render();
+                        }
+                        else
+                        {
+                            started = true;
+                            startButton.setImage(std::string("img/stop.png"));
+                            startText->setHodnota(std::string("STOP"));
+                            startButton.render();
+                            if(vystrel)
+                            {
+                                zvuk = rand() % 4;
+                                switch(zvuk)
+                                {
+                                    case 0:
+                                        Mix_PlayChannel( -1, prvni, 0 );
+                                        break;
+                                    case 1:
+                                        Mix_PlayChannel( -1, druhy, 0 );
+                                        break;
+                                    case 2:
+                                        Mix_PlayChannel( -1, treti, 0 );
+                                        break;
+                                    case 3:
+                                        Mix_PlayChannel( -1, ctvrty, 0 );
+                                        break;
+                                }
+                            }
+                            pravy = 0;
+                            levy = 0;
+                        }
+                        zvuk = rand() % 4;
+                }
             }
             else if (e.type == SDL_WINDOWEVENT) 
             {
@@ -385,7 +539,7 @@ int main(int argc, char **argv)
                         vystrel = true;
                     break;
                 case 't':
-                    if(posliPacket("t",packetOut,&socketOut))
+                    if(!posliPacket("t",packetOut,&socketOut))
                         printf("%s",SDLNet_GetError());
                     break;
                 case 'n':
@@ -438,6 +592,10 @@ int main(int argc, char **argv)
         {
             printf("%f",levy);
             printf("                      %f\n",pravy);
+            levyText->setHodnota(Convert(levy));
+            pravyText->setHodnota(Convert(pravy));
+            levyButton.render();
+            pravyButton.render();
             cislo = upravCas(levy);
             cislo += upravCas(pravy);
             cislo += getDate();
@@ -449,13 +607,27 @@ int main(int argc, char **argv)
         {
             ted = SDL_GetTicks();
             if(levy == 0)
+            {
                 printf("%f",((float)(ted - start))/(float)1000);
+                levyText->setHodnota(Convert(((float)(ted - start))/(float)1000));
+            }
             else
+            {
                 printf("%f",levy);
+                levyText->setHodnota(Convert(levy));
+            }
             if(pravy == 0)
+            {
                 printf("                      %f\n",((float)(ted - start))/(float)1000);
+                pravyText->setHodnota(Convert(((float)(ted - start))/(float)1000));
+            }
             else
+            {
                 printf("                      %f\n",pravy);
+                pravyText->setHodnota(Convert(pravy));
+            }
+            levyButton.render();
+            pravyButton.render();
         }
         SDL_Delay(spozdeni);
         SDL_RenderPresent(okno->getRenderer());
@@ -468,6 +640,10 @@ int main(int argc, char **argv)
     Mix_FreeChunk(ctvrty);
     
     delete okno;
+    delete muziZenyText;
+    delete startText;
+    delete levyText;
+    delete pravyText;
 
     Mix_Quit();
     

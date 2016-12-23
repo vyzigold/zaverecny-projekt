@@ -35,6 +35,7 @@ public:
     void setPos(SDL_Point);
     void setPosX(int);
     void setPosY(int);
+    bool setImage(std::string);
     
 private:
     SDL_Texture *texture;

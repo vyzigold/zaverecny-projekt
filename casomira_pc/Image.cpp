@@ -184,6 +184,31 @@ void Image::setPosY(int y)
     this->pos.y = y;
 }
 
+bool Image::setImage(std::string path)
+{
+    SDL_RWops *rwop_pom=SDL_RWFromFile(path.c_str(), "rb");
+    if(rwop_pom == NULL)
+    {
+        std::cout << "Nelze nacist obrazek" << IMG_GetError() << "\n" ;
+        return false;
+    }
+    //prevedeni raw pixelu na surface
+    SDL_Surface *image_pom=IMG_LoadPNG_RW(rwop_pom);
+    if(!image_pom) 
+    {
+        std::cout << "Nelze nacist obrazek" << IMG_GetError() << "\n" ;
+        return false;
+    }
+    
+    SDL_FreeSurface(image);
+    SDL_FreeRW(rwop);
+    
+    image = image_pom;
+    rwop = rwop_pom;
+            
+    return true;
+}
+
 Image::Image(const Image& orig) {
 }
 

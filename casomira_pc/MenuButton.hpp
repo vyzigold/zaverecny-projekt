@@ -22,6 +22,7 @@ public:
     void setPosY(int);
     void setWidth(int);
     void setHeight(int);
+    bool setImage(std::string);
     bool render();
     bool isIn(SDL_Point);
     MenuButton(const MenuButton& orig);

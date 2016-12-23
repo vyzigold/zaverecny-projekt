@@ -6,6 +6,7 @@
  */
 
 #include "Text.hpp"
+#include <string>
 
 /**
  * Konstruktor textu
@@ -86,6 +87,10 @@ std::string Text::getHodnota()
 
 void Text::setHodnota(std::string hodnota)
 {
+    while(hodnota!="0" && hodnota.length() < 5 && hodnota[1] == '.')
+    {
+        hodnota += "0";
+    }
     this->hodnota = hodnota;
 }
 

@@ -62,9 +62,9 @@ bool MenuButton::render(){
     if(SDL_RenderCopyEx(rend,textura,NULL,&rect,obrazek->getAngle(),obrazek->getCenter(),flip)!=0)
     {
         std::cout << "Nelze vyrendrovat" << SDL_GetError();
-        SDL_DestroyTexture(textura);
         return 0;
     }
+    SDL_DestroyTexture(textura);
     
     if(text != NULL)
     {
@@ -104,11 +104,10 @@ bool MenuButton::render(){
         if(SDL_RenderCopyEx(rend,textura,NULL,&rect,obrazek->getAngle(),&center,flip)!=0)
         {
             std::cout << "Nelze vyrendrovat" << SDL_GetError();
-            SDL_DestroyTexture(textura);
             return 0;
         }
+        SDL_DestroyTexture(textura);
     }
-    SDL_DestroyTexture(textura);
     return true;
 }
 
@@ -145,6 +144,11 @@ void MenuButton::setWidth(int w)
 void MenuButton::setHeight(int h)
 {
     this->obrazek->setH(h);
+}
+
+bool MenuButton::setImage(std::string path)
+{
+    return(this->obrazek->setImage(path));
 }
 
 MenuButton::MenuButton(const MenuButton& orig) {
