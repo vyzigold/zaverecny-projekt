@@ -61,11 +61,11 @@ function mouse()
 }
 
 
-function addProudari(pohlavi, pravyProud, levyProud, datum)
+function addProudari(pohlavi, pProud, lProud, datum)
 {
 	var found = false;
-	proudari[pohlavi].pProud[proudari[pohlavi].pProud.length]=pravyProud;
-	proudari[pohlavi].lProud[proudari[pohlavi].lProud.length]=levyProud;
+	proudari[pohlavi].pProud[proudari[pohlavi].pProud.length]=pProud;
+	proudari[pohlavi].lProud[proudari[pohlavi].lProud.length]=lProud;
 	for(var i = 0; i < proudari[pohlavi].day.datum.length && !found; i++)
 	{
 		if(proudari[pohlavi].day.datum[i] == datum)

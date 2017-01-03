@@ -24,7 +24,7 @@
     <style>
         body
         {
-            background-color: rgb(0,100,0);
+            background-color: rgb(190,190,0);
             text-align: center;
         }
         #canvasDiv
@@ -36,7 +36,7 @@
         }
         #muziProudy
         {
-            background-color: rgb(50,190,50);
+            background-color: rgb(255,255,80);
         }
         .menu_polozka
         {
@@ -100,38 +100,38 @@
         function muziProudy(){ 
             c.attr('width', $(container).width() ); //max width
             c.attr('height', $(container).height() ); //max height
-            printProudari(document.getElementById("muziProudy"),"nic","muzi");
+            printProudari(document.getElementById("muziProudy"),"nic","zeny");
             //Call a function to redraw other content (texts, images etc)
         }
 
         //Initial call 
-        addProudari("muzi", 1691, 1688, "1.1.2000");
-        addProudari("muzi", 2196, 2351, "1.1.2000");
-        addProudari("muzi", 2196, 2351, "2.2.2222");
-        addProudari("muzi", 1550, 1688, "19.6.1998");
-        addProudari("muzi", 2196, 2351, "19.6.1998");
+        addProudari("zeny",1691,1688);
+        addProudari("zeny",2196,2351);
+        addProudari("zeny",2196,2351);
+        addProudari("zeny",1550,1688);
+        addProudari("zeny",2196,2351);
 
-        /*addDay("muzi","1.1.2000",2);
-        addDay("muzi","2.2.2222",1);
-        addDay("muzi","19.6.1998",2);*/
-        //{add}
+        addDay("zeny","1.1.2000",2);
+        addDay("zeny","2.2.2222",1);
+        addDay("zeny","19.6.1998",2);
         muziProudy();
 
+        //{add}
 
 
-        printProudari(document.getElementById("muziProudy"),"nic","muzi");
+        printProudari(document.getElementById("muziProudy"),"nic","zeny");
 
 
         pixelOnMouseOver(document.getElementById("muziProudy"),function(r,g,b){
             if("("+r+","+g+","+b+")"=="(255,0,0)"||"("+r+","+g+","+b+")"=="(0,0,255)")
             {
                 document.getElementById("aaa").innerHTML = (("("+r+","+g+","+b+")" == "(255,0,0)") ? "Pravý proud" : "Levý proud");
-                for(var i=0;i<proudari.muzi.pProud.length;i++)
+                for(var i=0;i<proudari.zeny.pProud.length;i++)
                 {
-                    cas = proudari.muzi[(("("+r+","+g+","+b+")" == "(255,0,0)") ? "pProud" : "lProud")][i].toString();
+                    cas = proudari.zeny[(("("+r+","+g+","+b+")" == "(255,0,0)") ? "pProud" : "lProud")][i].toString();
                     document.getElementById("a"+(i+1)).innerHTML=cas[0]+cas[1]+","+cas[2]+cas[3];
                 }
-                printProudari(document.getElementById("muziProudy"),(("("+r+","+g+","+b+")" == "(255,0,0)") ? "pravy" : "levy"),"muzi");
+                printProudari(document.getElementById("muziProudy"),(("("+r+","+g+","+b+")" == "(255,0,0)") ? "pravy" : "levy"),"zeny");
             }
             
         });

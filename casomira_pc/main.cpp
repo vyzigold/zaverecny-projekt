@@ -602,6 +602,9 @@ int main(int argc, char **argv)
             if(posliPacket(&cislo[0],packetOut,&socketOut))
                 printf("%s",SDLNet_GetError());
             started = false;
+            startText->setHodnota(std::string("START"));
+            startButton.setImage(std::string("img/start.png"));
+            startButton.render();
         }
         if(vypis && started)
         {

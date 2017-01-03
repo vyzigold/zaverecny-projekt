@@ -127,7 +127,7 @@ void zapisCas(char* data, int delka)
 	fileWrite(soubor, ";", 1);
 	fileWrite(soubor,pravy, 4);
 	fileWrite(soubor, ";", 1);
-	fileWrite(soubor,date, delka-8);
+	fileWrite(soubor,date, delka-9);
 	fileWrite(soubor, "\n", 1);
 	delete[](levy);
 	levy = 0;
@@ -217,15 +217,16 @@ void IRAM_ATTR interruptHandler2()
 void onIndex(HttpRequest &request, HttpResponse &response)
 {
 	file_t soubor;
-	if(request.getPath == "zeny.html")
+	TemplateFileStream *tmpl;
+	if(request.getPath() == "zeny.html")
 	{
 		soubor = fileOpen(String("zeny"),eFO_ReadOnly);
-		TemplateFileStream *tmpl = new TemplateFileStream("zeny.html");
+		tmpl = new TemplateFileStream("zeny.html");
 	}
 	else
 	{
 		soubor = fileOpen(String("muzi"),eFO_ReadOnly);
-		TemplateFileStream *tmpl = new TemplateFileStream("index.html");
+		tmpl = new TemplateFileStream("index.html");
 	}
 	auto &vars = tmpl->variables();
 
@@ -265,7 +266,7 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 			Serial.println("\n");
 			fileRead(soubor,(void *) c,1);
 		}
-		if(request.getPath == "zeny.html")
+		if(request.getPath() == "zeny.html")
 			add += "addProudari(\"zeny\",";
 		else
 			add += "addProudari(\"muzi\",";
@@ -278,9 +279,9 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 			Serial.print("LEFT: ");
 			Serial.print(left);
 			Serial.println("\n");
-		add += ",";
+		add += ",\"";
 		add += date;
-		add += ");\n";
+		add += "\");\n";
 		left = "";
 		right = "";
 		date = "";
@@ -324,7 +325,7 @@ void onDelete(HttpRequest &request, HttpResponse &response)
 		jmenoSouboru = "muzi";
 	if(id[0] == 'z')
 		jmenoSouboru = "zeny";
-	fileOpen(&jmenoSouboru[0],eFO_ReadOnly)
+	fileOpen(&jmenoSouboru[0],eFO_ReadOnly);
 	String nacteno = "";
 	char *c = new char[1];
 	while(!fileIsEOF(soubor))
@@ -340,12 +341,12 @@ void onDelete(HttpRequest &request, HttpResponse &response)
 	for(int i = 0; i < nacteno.length(); i++)
 	{
 		if(zaznam != id[1])
-			fileWrite(soubor, nacteno[i]; 1);
+			fileWrite(soubor, (void*)&(nacteno[i]), 1);
 		if(nacteno[i] == '\n')
 			zaznam++;
 	}
 	response.setCache(86400, true); // It's important to use cache for better performance.
-	response.sendFile(casy.html);
+	response.sendFile("casy.html");
 	return;
 }
 
