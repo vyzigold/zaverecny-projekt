@@ -161,7 +161,7 @@ function printStupnice(canvas,pohlavi)
 				i-=1;
 			i*=100;
 		}*/
-		console.log(i);
+		//console.log(i);
 		if(i<max)
 			i+=Math.round(((max-min)/15)/10)*10;
 		if(i==max)
