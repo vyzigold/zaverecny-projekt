@@ -48,6 +48,10 @@
             margin: 15px;
             padding: 0px 15px 0px 15px;
         }
+        table
+        {
+        	margin: auto auto;
+        }
     </style>
   </head>
 
@@ -92,17 +96,17 @@
         }
 
         //Initial call 
-        /*addProudari("zeny",1691,1688);
-        addProudari("zeny",2196,2351);
-        addProudari("zeny",2196,2351);
-        addProudari("zeny",1550,1688);
-        addProudari("zeny",2196,2351);
+        addProudari("zeny",1691,1688,"1.1.2017");
+        addProudari("zeny",2196,2351,"2.1.2017");
+        addProudari("zeny",2196,2351,"2.1.2017");
+        addProudari("zeny",1550,1688,"3.1.2017");
+        addProudari("zeny",2196,2351,"3.1.2017");
 
-        addDay("zeny","1.1.2000",2);
+        /*addDay("zeny","1.1.2000",2);
         addDay("zeny","2.2.2222",1);
         addDay("zeny","19.6.1998",2);*/
 
-        {add}
+        //{add}
         muziProudy();
 
 
@@ -128,26 +132,26 @@
                 document.getElementById("proud").innerHTML = (("("+r+","+g+","+b+")" == "(255,0,0)") ? "Pravý proud" : "Levý proud");
                 var pocet = 0;
                 var j = 0;
-                for(var i=0;i<proudari.muzi.pProud.length;i++)
+                for(var i=0;i<proudari.zeny.pProud.length;i++)
                 {
                     if(pocet == 0)
                     {
-                        pocet = proudari.muzi.day.pocet[j];
+                        pocet = proudari.zeny.day.pocet[j];
                         j++;
                     }
                     var td_cas = document.createElement("td");
                     var td_datum = document.createElement("td");
                     td_cas.className += "detail_cas";
                     td_datum.className += "detail_datum";
-                    cas = proudari.muzi[(("("+r+","+g+","+b+")" == "(255,0,0)") ? "pProud" : "lProud")][i].toString();
-                    datum = proudari.muzi.day.datum[j-1];
+                    cas = proudari.zeny[(("("+r+","+g+","+b+")" == "(255,0,0)") ? "pProud" : "lProud")][i].toString();
+                    datum = proudari.zeny.day.datum[j-1];
                     td_cas.appendChild(document.createTextNode(cas[0]+cas[1]+","+cas[2]+cas[3]));
                     td_datum.appendChild(document.createTextNode(i+" "+datum));
                     document.getElementById("datum").appendChild(td_datum);
                     document.getElementById("cas").appendChild(td_cas);
                     pocet--;
                 }
-                printProudari(document.getElementById("muziProudy"),(("("+r+","+g+","+b+")" == "(255,0,0)") ? "pravy" : "levy"),"muzi");
+                printProudari(document.getElementById("muziProudy"),(("("+r+","+g+","+b+")" == "(255,0,0)") ? "pravy" : "levy"),"zeny");
             }
             
         });

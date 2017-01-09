@@ -9,7 +9,7 @@
 
 
 #define INT_PIN 13   // GPIO0
-#define DALSI 12
+#define DALSI 14
 
 bool pohlavi = true;
 
@@ -167,12 +167,14 @@ void onReceive(UdpConnection& connection, char *data, int size, IPAddress remote
 void IRAM_ATTR interruptHandler()
 {
 	String text = "p";
+	Serial.println("p");
 	udp.sendStringTo(IPAddress(192, 168, 4, 2), 6666, text);
 }
 
 void IRAM_ATTR interruptHandler2()
 {
 	String text = "l";
+	Serial.println("l");
 	udp.sendStringTo(IPAddress(192, 168, 4, 2), 6666, text);
 }
 
@@ -218,7 +220,7 @@ void onIndex(HttpRequest &request, HttpResponse &response)
 {
 	file_t soubor;
 	TemplateFileStream *tmpl;
-	if(request.getPath() == "zeny.html")
+	if(request.getPath() == "/zeny.html")
 	{
 		soubor = fileOpen(String("zeny"),eFO_ReadOnly);
 		tmpl = new TemplateFileStream("zeny.html");
