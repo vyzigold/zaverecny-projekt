@@ -1,5 +1,8 @@
 # zaverecny-projekt
 
+## Video ukázka:
+https://www.youtube.com/watch?v=r7VSxA_xa6Q&t=7s
+
 
 ## Zdroje:
 
